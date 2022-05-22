@@ -1,23 +1,45 @@
-package com.example.sqlitea.database.;
+package com.example.sqlitea.database;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.kelasasqlite.database.AppController;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.example.sqlitea.MainActivity;
+import com.example.sqlitea.database.AppController;
 import com.example.sqlitea.R;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class edit_teman extends AppCompatActivity {
-    TextInputEditText Nama, Telepon;
-    Button Save;
-    String nma, tlp, id;
+    TextView idText;
+    Button buttonEdit;
+    EditText edNama, edTelpon;
+    String nm, tlp, id, namaEd, telponEd;
+    int sukses;
+
+    private static String url_update = "http://10.2.2/pam_a/updatetm.php";
+    private static final String TAG = edit_teman.class.getSimpleName();
+    private static final String TAG_SUCCES = "succes";
     AppController controller = new AppController(this);
 
     @Override
@@ -25,39 +47,76 @@ public class edit_teman extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_teman);
 
-        Nama = findViewById(R.id.edNama);
-        Telepon = findViewById(R.id.edTelp);
-        Save = findViewById(R.id.simpanBtn);
+        idText = findViewById(R.id.textId);
+        edNama = findViewById(R.id.editNm);
+        edTelpon = findViewById(R.id.editTlp);
+        buttonEdit = findViewById(R.id.buttonEdit);
 
-        id = getIntent().getStringExtra("id");
-        nma = getIntent().getStringExtra("nama");
-        tlp = getIntent().getStringExtra("telpon");
+        Bundle bundle = getIntent().getExtras();
+        id = getIntent().getStringExtra("kunci1");
+        nm = getIntent().getStringExtra("kunci2");
+        tlp = getIntent().getStringExtra("kunci3");
 
-        setTitle("Edit Data");
-        Nama.setText(nma);
-        Telepon.setText(tlp);
+        idText.setText("Id: " + id);
+        edNama.setText(nm);
+        edTelpon.setText(tlp);
 
-        Save.setOnClickListener(new View.OnClickListener() {
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Nama.getText().toString().equals("") || Telepon.getText().toString().equals("")){
-                    Toast.makeText(getApplicationContext(), "Fill the data first!", Toast.LENGTH_LONG).show();
-                }else{
-                    nma = Nama.getText().toString();
-                    tlp = Telepon.getText().toString();
-                    HashMap<String, String> values = new HashMap<>();
-                    values.put("id", id);
-                    values.put("nama", nma);
-                    values.put("telpon", tlp);
-                    controller.UpdateData(values);
-                    callHome();
-                }
+                EditData();
             }
         });
+
     }
-    public void callHome(){
-        Intent i = new Intent(edit_teman.this, com.example.sqlitea.MainActivity.class);
-        startActivity(i);
+
+    public void EditData() {
+        namaEd = edNama.getText().toString();
+        telponEd = edTelpon.getText().toString();
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest stringReq = new StringRequest(Request.Method.POST, url_update, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Respon : " + response.toString());
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    sukses = jObj.getInt(TAG_SUCCES);
+                    if (sukses == 1) {
+                        Toast.makeText(edit_teman.this, "Sukses mengedit data", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(edit_teman.this, "gagal", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error : " + error.getMessage());
+                Toast.makeText(edit_teman.this, "Gagal Edit Data", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("id", id);
+                params.put("nama", namaEd);
+                params.put("telpon", telponEd);
+
+                return params;
+            }
+
+        };
+        requestQueue.add(stringReq);
+        CallHomeActivity();
+    }
+
+    public void CallHomeActivity() {
+        Intent inten = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(inten);
         finish();
     }
 }

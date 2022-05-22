@@ -18,11 +18,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edNama"
+            android:id="@+id/editNm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
             android:hint="Nama"
+            android:inputType="textPersonName"
             android:textColor="@color/black"
             android:textColorHint="@color/white"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -37,20 +38,21 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTlp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/edTelp"
             android:background="@color/white"
-            android:hint="No Telpon"
+            android:hint="Telpon"
+            android:inputType="phone"
             android:textColor="@color/black"
             android:textColorHint="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/simpanBtn"
+        android:id="@+id/buttonEdit"
         android:layout_width="134dp"
         android:layout_height="53dp"
-        android:text="Simpan"
+        android:text="Update"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,10 +60,10 @@
         app:layout_constraintVertical_bias="0.583" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textId"
         android:layout_width="127dp"
         android:layout_height="51dp"
-        android:text="Edit Data"
+        android:text="TextView"
         android:textSize="25dp"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayout3"
         app:layout_constraintEnd_toEndOf="parent"
