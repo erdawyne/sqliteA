@@ -37,7 +37,7 @@ public class edit_teman extends AppCompatActivity {
     String nm, tlp, id, namaEd, telponEd;
     int sukses;
 
-    private static String url_update = "http://10.2.2/pam_a/updatetm.php";
+    private static String url_update = "https://20200140039.praktikumtiumy.com/updatetm.php";
     private static final String TAG = edit_teman.class.getSimpleName();
     private static final String TAG_SUCCES = "succes";
     AppController controller = new AppController(this);
